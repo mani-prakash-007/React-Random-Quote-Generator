@@ -4,6 +4,8 @@ import { FaQuoteLeft, FaQuoteRight } from "react-icons/fa6";
 import { HiMiniSpeakerWave } from "react-icons/hi2";
 import { FaCopy } from "react-icons/fa6";
 import { BsTwitterX } from "react-icons/bs";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const RandomQuote = () => {
   //State
@@ -25,7 +27,7 @@ export const RandomQuote = () => {
   //Function for Copying Clipboard
   const handleCopy = () => {
     navigator.clipboard.writeText(quote[0].q);
-    alert("Quote copied to clipboard");
+    toast.success("Quote copied to clipboard");
   };
 
   //Function
@@ -44,9 +46,6 @@ export const RandomQuote = () => {
       setQuote(error);
     }
   };
-
-  //   console.log(quote[0].q);
-  //   console.log(quote[0].a);
 
   return (
     <>
@@ -80,12 +79,15 @@ export const RandomQuote = () => {
             >
               <HiMiniSpeakerWave />
             </button>
-            <button
-              onClick={handleCopy}
-              className="border border-gray-400 bg-custom-gradient rounded-full text-xl p-3 active:scale-90 mx-2 hover:text-gray-500"
-            >
-              <FaCopy />
-            </button>
+            <div>
+              <button
+                onClick={handleCopy}
+                className="border border-gray-400 bg-custom-gradient rounded-full text-xl p-3 active:scale-90 mx-2 hover:text-gray-500"
+              >
+                <FaCopy />
+              </button>
+              <ToastContainer />
+            </div>
             <button
               onClick={handleTweet}
               className="border border-gray-400 rounded-full bg-custom-gradient text-xl p-3 active:scale-90 mx-2 hover:text-gray-500"
