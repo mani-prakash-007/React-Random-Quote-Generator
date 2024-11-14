@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaQuoteLeft, FaQuoteRight } from "react-icons/fa6";
 import { HiMiniSpeakerWave } from "react-icons/hi2";
 import { FaCopy } from "react-icons/fa6";
@@ -9,47 +9,45 @@ import "react-toastify/dist/ReactToastify.css";
 
 export const RandomQuote = () => {
   //State
-  const [quote, setQuote] = useState([
-    {
-      q: "Don't waste your time. Invest your time.",
-      a: "Mani Prakash",
-    },
-  ]);
+  const [quote, setQuote] = useState();
 
   //Function for Reader
   const handleReader = () => {
     const reader = new SpeechSynthesisUtterance(
-      `${quote[0].q} by ${quote[0].a}`
+      `${quote.quote} by ${quote.author}`
     );
     speechSynthesis.speak(reader);
   };
 
   //Function for Copying Clipboard
   const handleCopy = () => {
-    navigator.clipboard.writeText(quote[0].q);
+    navigator.clipboard.writeText(quote.quote);
     toast.success("Quote copied to clipboard");
   };
 
   //Function
   const handleTweet = () => {
-    const tweeturl = `https://x.com/intent/tweet?url=${quote[0].q}`;
+    const tweeturl = `https://x.com/intent/tweet?url=${quote.content}`;
     window.open(tweeturl, "_blank");
   };
   //Function
-  const handleClick = async () => {
+  const fetchQuote = async () => {
     try {
-      const proxyUrl = "https://thingproxy.freeboard.io/fetch/"; // Public CORS proxy
-      const apiUrl = "https://zenquotes.io/api/random";
-      const response = await axios.get(proxyUrl + apiUrl);
+      const apiUrl = "https://qapi.vercel.app/api/random";
+      const response = await axios.get(apiUrl);
+      console.log(response.data);
       setQuote(response.data);
     } catch (error) {
       setQuote(error);
     }
   };
-
+  //Side Effects
+  useEffect(() => {
+    fetchQuote();
+  }, []);
   return (
     <>
-      <div className="flex flex-col border border-black bg-white w-156 min-h-80 my-40 rounded-3xl">
+      <div className="flex flex-col items-center justify-center border border-black bg-white lg:w-156 md:w-120 sm:w-108 w-108 mx-5 min-h-80 my-40 rounded-3xl">
         <div className="my-2 mx-5">
           <h1 className="font-bold text-4xl my-3 text-center">
             Quote of the Day
@@ -57,14 +55,14 @@ export const RandomQuote = () => {
         </div>
         <div className="text-wrap my-5 mx-5 px-5">
           <div className="flex justify-center my-3 px-2">
-            <FaQuoteLeft className="mx-2" />
+            <FaQuoteLeft className="mx-2 text-xl" />
             <h1 className="font-poppins text-xl text-center my-2">
-              {quote[0].q}
+              {quote?.quote}
             </h1>
-            <FaQuoteRight className="mx-2" />
+            <FaQuoteRight className="mx-2 text-xl" />
           </div>
           <p className="italic font-poppins text-end text-lg font-semibold mx-6">
-            - {quote[0].a}
+            - {quote?.author}
           </p>
         </div>
 
@@ -97,7 +95,7 @@ export const RandomQuote = () => {
           </div>
           <div className="w-full mx-3 flex justify-end px-3">
             <button
-              onClick={handleClick}
+              onClick={fetchQuote}
               className="border font-poppins font-thin border-gray-400 w-40 h-full bg-custom-gradient rounded-3xl active:scale-90"
             >
               New Quote
